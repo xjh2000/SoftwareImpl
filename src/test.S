@@ -1,0 +1,11 @@
+    xori t0, t0, 0x10,
+    xor  t0, t0, a2
+    slli a3, a3, 8
+    xor  t0, t0, a3
+    slli a4, a4, 16
+    xor  t0, t0, a4
+    slli a5, a5, 24
+    xor  t0, t0, a5
+    xor  t1, t1, t0
+    xor  t2, t2, t1
+    xor  t3, t3, t2

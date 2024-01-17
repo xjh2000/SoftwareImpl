@@ -4,98 +4,66 @@
 #include <stdlib.h>
 #include "nuclei_sdk_soc.h"
 
-void print_misa(void)
-{
-    CSR_MISA_Type misa_bits = (CSR_MISA_Type) __RV_CSR_READ(CSR_MISA);
-    static char misa_chars[30];
-    uint8_t index = 0;
-    if (misa_bits.b.mxl == 1) {
-        misa_chars[index++] = '3';
-        misa_chars[index++] = '2';
-    } else if (misa_bits.b.mxl == 2) {
-        misa_chars[index++] = '6';
-        misa_chars[index++] = '4';
-    } else if (misa_bits.b.mxl == 3) {
-        misa_chars[index++] = '1';
-        misa_chars[index++] = '2';
-        misa_chars[index++] = '8';
-    }
-    if (misa_bits.b.i) {
-        misa_chars[index++] = 'I';
-    }
-    if (misa_bits.b.m) {
-        misa_chars[index++] = 'M';
-    }
-    if (misa_bits.b.a) {
-        misa_chars[index++] = 'A';
-    }
-    if (misa_bits.b.b) {
-        misa_chars[index++] = 'B';
-    }
-    if (misa_bits.b.c) {
-        misa_chars[index++] = 'C';
-    }
-    if (misa_bits.b.e) {
-        misa_chars[index++] = 'E';
-    }
-    if (misa_bits.b.f) {
-        misa_chars[index++] = 'F';
-    }
-    if (misa_bits.b.d) {
-        misa_chars[index++] = 'D';
-    }
-    if (misa_bits.b.q) {
-        misa_chars[index++] = 'Q';
-    }
-    if (misa_bits.b.h) {
-        misa_chars[index++] = 'H';
-    }
-    if (misa_bits.b.j) {
-        misa_chars[index++] = 'J';
-    }
-    if (misa_bits.b.l) {
-        misa_chars[index++] = 'L';
-    }
-    if (misa_bits.b.n) {
-        misa_chars[index++] = 'N';
-    }
-    if (misa_bits.b.s) {
-        misa_chars[index++] = 'S';
-    }
-    if (misa_bits.b.p) {
-        misa_chars[index++] = 'P';
-    }
-    if (misa_bits.b.t) {
-        misa_chars[index++] = 'T';
-    }
-    if (misa_bits.b.u) {
-        misa_chars[index++] = 'U';
-    }
-    if (misa_bits.b.v) {
-        misa_chars[index++] = 'V';
-    }
-    if (misa_bits.b.x) {
-        misa_chars[index++] = 'X';
-    }
-
-    misa_chars[index++] = '\0';
-
-    printf("MISA: RV%s\r\n", misa_chars);
-}
+extern void AES_128_keyschedule(const uint8_t *, uint8_t *);
+extern void AES_128_keyschedule_dec(const uint8_t *, uint8_t *);
+extern void AES_128_encrypt(const uint8_t *, const uint8_t *, uint8_t *);
+extern void AES_128_decrypt(const uint8_t *, const uint8_t *, uint8_t *);
 
 int main(void)
 {
-    srand(__get_rv_cycle()  | __get_rv_instret() | __RV_CSR_READ(CSR_MCYCLE));
-    uint32_t rval = rand();
-    rv_csr_t misa = __RV_CSR_READ(CSR_MISA);
 
-    printf("MISA: 0x%lx\r\n", misa);
-    print_misa();
+    const uint8_t key[16] = {4, 5, 6, 7, 4, 5, 6, 8, 4, 5, 6, 9, 4, 5, 6, 10};
+    uint8_t in[16] = {0, 0, 0, 0, 1, 2, 3, 1, 2, 4, 1, 2, 5, 1, 2, 6};
+    uint8_t out[16];
 
-    for (int i = 0; i < 20; i ++) {
-        printf("%d: Hello xjh!!\r\n", i);
+    uint8_t rk[11 * 16];
+
+    for (size_t i = 0; i < 16; i++)
+    {
+        rk[i] = key[i];
     }
+
+    AES_128_keyschedule(key, rk + 16);
+    AES_128_keyschedule(key, rk + 16);
+    AES_128_keyschedule(key, rk + 16);
+    AES_128_keyschedule(key, rk + 16);
+    uint64_t oldcount = __get_rv_cycle();
+    AES_128_keyschedule(key, rk + 16);
+    uint64_t cyclecount = __get_rv_cycle() - oldcount;
+
+    // Print all round keys
+    unsigned int i, j;
+    for (i = 0; i < 11 * 4; ++i)
+    {
+        printf("rk[%2d]: ", i);
+        for (j = 0; j < 4; ++j)
+        {
+            printf("%02x", rk[i * 4 + j]);
+        }
+        printf("\n");
+    }
+
+    printf("cyc: %u\n", (unsigned int)cyclecount);
+    // Fill instruction cache and train branch predictors
+    AES_128_encrypt(rk, in, out);
+    AES_128_encrypt(rk, in, out);
+    AES_128_encrypt(rk, in, out);
+    AES_128_encrypt(rk, in, out);
+    AES_128_encrypt(rk, in, out);
+    AES_128_encrypt(rk, in, out);
+    oldcount = __get_rv_cycle();
+    AES_128_encrypt(rk, in, out);
+    cyclecount = __get_rv_cycle() - oldcount;
+
+    printf("cyc: %d\n", (unsigned int)cyclecount);
+
+    // Print ciphertext
+    printf("out: ");
+    for (i = 0; i < 16; ++i)
+    {
+        printf("%02x", out[i]);
+    }
+    printf("\n");
 
     return 0;
 }
-

@@ -1,0 +1,53 @@
+//
+// !!! WARNING !!! AUTO-GENERATED FILE!
+// PLEASE DO NOT MODIFY IT AND USE "platformio.ini":
+// https://docs.platformio.org/page/projectconf/section_env_build.html#build-flags
+//
+{
+    "configurations": [
+        {
+            "name": "PlatformIO",
+            "includePath": [
+                "/home/xjh/c/SoftwareImpl/include",
+                "/home/xjh/c/SoftwareImpl/src",
+                "/home/xjh/.platformio/packages/framework-nuclei-sdk/NMSIS/Include",
+                "/home/xjh/.platformio/packages/framework-nuclei-sdk/NMSIS/Core/Include",
+                "/home/xjh/.platformio/packages/framework-nuclei-sdk/NMSIS/DSP/Include",
+                "/home/xjh/.platformio/packages/framework-nuclei-sdk/NMSIS/NN/Include",
+                "/home/xjh/.platformio/packages/framework-nuclei-sdk/SoC/gd32vf103/Common/Include",
+                "/home/xjh/.platformio/packages/framework-nuclei-sdk/SoC/gd32vf103/Board/gd32vf103c_longan_nano/Include",
+                "/home/xjh/.platformio/packages/framework-nuclei-sdk/SoC/gd32vf103/Common/Include/Usb",
+                ""
+            ],
+            "browse": {
+                "limitSymbolsToIncludedHeaders": true,
+                "path": [
+                    "/home/xjh/c/SoftwareImpl/include",
+                    "/home/xjh/c/SoftwareImpl/src",
+                    "/home/xjh/.platformio/packages/framework-nuclei-sdk/NMSIS/Include",
+                    "/home/xjh/.platformio/packages/framework-nuclei-sdk/NMSIS/Core/Include",
+                    "/home/xjh/.platformio/packages/framework-nuclei-sdk/NMSIS/DSP/Include",
+                    "/home/xjh/.platformio/packages/framework-nuclei-sdk/NMSIS/NN/Include",
+                    "/home/xjh/.platformio/packages/framework-nuclei-sdk/SoC/gd32vf103/Common/Include",
+                    "/home/xjh/.platformio/packages/framework-nuclei-sdk/SoC/gd32vf103/Board/gd32vf103c_longan_nano/Include",
+                    "/home/xjh/.platformio/packages/framework-nuclei-sdk/SoC/gd32vf103/Common/Include/Usb",
+                    ""
+                ]
+            },
+            "defines": [
+                "PLATFORMIO=60113",
+                "DOWNLOAD_MODE=DOWNLOAD_MODE_FLASHXIP",
+                "NO_RTOS_SERVICE",
+                ""
+            ],
+            "compilerPath": "/home/xjh/.platformio/packages/toolchain-riscv-gcc-nuclei/bin/riscv-nuclei-elf-gcc",
+            "compilerArgs": [
+                "-march=rv32imac",
+                "-mabi=ilp32",
+                "-mcmodel=medlow",
+                ""
+            ]
+        }
+    ],
+    "version": 4
+}
